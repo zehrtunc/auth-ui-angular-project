@@ -34,5 +34,18 @@ export class Register {
       this.registerForm.reset();
     }
 
+    this.loading = true;
+
+    setTimeout(() => {
+      const{ name, email, password } = this.registerForm.getRawValue();
+
+      const users: any[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+      if(users.some(u => u.email == email)) {
+        this.loading = false;
+        this.errorMessage = 'Bu e-posta ile daha önce kayıt olunmuş.';
+      }
+    });
+
   }
 }

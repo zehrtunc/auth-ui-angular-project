@@ -16,8 +16,10 @@
                         <label class="form-check-label">Beni Hatırla</label>
                         <input type="checkbox" class="form-check-input" formControlName="rememberMe">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Kayıt Ol</button>
+                    <!-- <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Kayıt Ol</button> -->
+                    <p-button severity="success" type="submit" class="w-100" [disabled]="loginForm.invalid">Giriş</p-button>
                     <a routerLink="/register">Hesabınız yok mu?</a>
+                    <!-- <app-register></app-register> -->
                 </form>
             </div>
         </div>

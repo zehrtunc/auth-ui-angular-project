@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ButtonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
@@ -29,6 +30,17 @@ export class Login {
 
       setTimeout(() => {
         this.loading = false;
+
+        const { email, rememberMe } = this.loginForm.getRawValue();
+
+        const user = {
+          email,
+          rememberMe,
+          loggedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('user', JSON.stringify(user));
+
         this.router.navigate(['/dashboard']); // giriş başarılıysa dasboard sayfasına yönlendir.
       }, 1000); // yalandan 1 sn bekletme 
     } 
