@@ -31,7 +31,7 @@ export class Dashboard {
   selectedNodes: any[] = [];
 
   ngOnInit() {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user') ?? sessionStorage.getItem('user');
 
     if(storedUser) {
       this.user = JSON.parse(storedUser);
@@ -43,6 +43,7 @@ export class Dashboard {
 
   logout() {
     localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 }

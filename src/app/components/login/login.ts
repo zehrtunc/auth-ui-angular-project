@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -25,28 +25,34 @@ export class Login {
   }
 
   onSubmit() {
-    if(this.loginForm.valid) {
-      this.loading = true; 
+    if (this.loginForm.invalid) return;
 
-      setTimeout(() => {
+    this.loading = true; // islem devam ediyor buton aktif degil
+
+      const { email, password, rememberMe } = this.loginForm.getRawValue();
+
+      const users: any[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+      const found = users.find(u => u.email === email && u.password === password);
+
+      if (!found) {
         this.loading = false;
+        this.errorMessage = 'E-posta veya şifre hatalı.';
+        return; // kod akisi if bloguna girdiyse fonk. kodlari bundan sonrasinda calismayacak
+      }
 
-        const { email, rememberMe } = this.loginForm.getRawValue();
+      const sessionUser = {
+        name: found.name,
+        email: found.email,
+        loggedAt: new Date().toISOString()
+      };
 
-        const user = {
-          email,
-          rememberMe,
-          loggedAt: new Date().toISOString()
-        };
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('user', JSON.stringify(sessionUser));
 
-        localStorage.setItem('user', JSON.stringify(user));
+      this.loading = false; // islem bitti buton aktif olabilir
+      this.router.navigate(['/dashboard']); // giriş başarılıysa dasboard sayfasına yönlendir.
 
-        this.router.navigate(['/dashboard']); // giriş başarılıysa dasboard sayfasına yönlendir.
-      }, 1000); // yalandan 1 sn bekletme 
-    } 
-    else {
-      this.errorMessage = 'Lütfen geçerli bilgiler girin.';
-    }
   }
 
 }

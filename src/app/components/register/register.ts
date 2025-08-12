@@ -14,12 +14,9 @@ import { Router, RouterLink } from '@angular/router';
 export class Register {
   registerForm:  FormGroup;
   loading = false;
+  errorMessage = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router
-  
-  ) {
+  constructor(private fb: FormBuilder,private router: Router) {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -28,13 +25,9 @@ export class Register {
   }
 
   onSubmit() {
-    if(this.registerForm.valid) {
-      console.log(this.registerForm.value); 
-      alert('Kayıt başarılı');
-      this.registerForm.reset();
-    }
-
-    this.loading = true;
+    if(this.registerForm.invalid) return; // gelen bilgiler valid degilse burdan sonraki fonksiyon kodlarini calistirma. fonk. disina cik
+    
+    this.loading = true; //islem devam ediyor butonu kitle
 
     setTimeout(() => {
       const{ name, email, password } = this.registerForm.getRawValue();
@@ -44,8 +37,22 @@ export class Register {
       if(users.some(u => u.email == email)) {
         this.loading = false;
         this.errorMessage = 'Bu e-posta ile daha önce kayıt olunmuş.';
+        return; // fonksiyon burdan sonra calismayi birakmasi icin
       }
-    });
+      // fonks. kod akisi bu if`in icine girmezse asagidaki kodlar calisir
 
+      users.push({ name, email, password, createdAt: new Date().toISOString() });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      this.loading = false; // islem bitti, butonu aktif et 
+
+      console.log(this.registerForm.value); 
+      alert('Kayıt başarılı');
+      this.registerForm.reset(); // tum bilgiler alindiktan sonra formu temizleriz, bunu yapabiklmesi tum islemlerden sonrasina yazariz
+
+      this.router.navigate(['/login']);
+    }, 1000);
+
+    
   }
 }
